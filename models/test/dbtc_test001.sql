@@ -1,9 +1,9 @@
-{{ config( materialized = "table", pre_hook = "" ) }}
+{{ config( materialized = "view", pre_hook = "" ) }}
 
 WITH 
 tFileInputDelimited_1 AS (SELECT study_id, program_id FROM {{ var('tFileInputDelimited_1') }}),
 tFileInputDelimited_2 AS (SELECT study_id, study_name, study_description FROM {{ var('tFileInputDelimited_2') }}),
-tJoin_1 AS (SELECT study_id, program_id, study_name FROM tFileInputDelimited_1 INNER JOIN ON tFileInputDelimited_1.study_id = tFileInputDelimited_2.study_id),
+tJoin_1 AS (SELECT study_id, program_id, study_name FROM tFileInputDelimited_1 INNER JOIN tFileInputDelimited_2 ON tFileInputDelimited_1.study_id = tFileInputDelimited_2.study_id),
 tFileInputDelimited_3 AS (SELECT study_id, program_id, study_name FROM {{ var('tFileInputDelimited_3') }}),
 tUnite_1 AS (SELECT study_id, program_id, study_name FROM tJoin_1 UNION ALL SELECT study_id, program_id, study_name FROM tFileInputDelimited_3),
 tFilterRow_2 AS (SELECT study_id, program_id, study_name FROM tUnite_1 WHERE study_id >= 5),
